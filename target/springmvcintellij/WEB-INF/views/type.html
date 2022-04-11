@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type</title>
+    <link rel="stylesheet" th:href="@{/resources/css/type.css}" />
+
+    <script src="https://kit.fontawesome.com/a59c2f3f1f.js" crossorigin="anonymous"></script>
+<!--    <script type="text/javascript" th:src="@{/resources/js/type.js}" defer></script>-->
+</head>
+<body>
+    <div id="container-type">
+        <div class="container-level" id="1">
+            <div class="container-row">
+                <div class="row clearfix" th:each="level1 : ${level1s}">
+                    <input type="hidden" th:value="${level1.id}">
+                    <div class="information" th:classappend="(${level1Id} == ${level1.id}) ? 'selectedInformation':''" th:text="${level1.name}">information</div>
+                    <div class="modify"> <input type="text" th:value="${level1.name}"> </div>
+                    <div class="container-delete-update">
+                        <span class="update"><i class="fa-solid fa-pen"></i></span>
+                        <span class="delete"><i class="fa-solid fa-trash"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container-add">
+                <i class="add fa-solid fa-plus"></i>
+                <input class="input-of-new-type" type="text">
+            </div>
+        </div>
+        <div class="container-level" id="2" th:if="${level2s} != null">
+            <div class="container-row">
+                <div class="row clearfix" th:each="level2 : ${level2s}">
+                    <input type="hidden" th:value="${level2.id}">
+                    <div class="information"  th:classappend="(${level2Id} == ${level2.id}) ? 'selectedInformation':''" th:text="${level2.name}">information</div>
+                    <div class="modify"> <input type="text" th:value="${level2.name}"> </div>
+                    <div class="container-delete-update">
+                        <span class="update"><i class="fa-solid fa-pen"></i></span>
+                        <span class="delete"><i class="fa-solid fa-trash"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container-add">
+                <i class="add fa-solid fa-plus"></i>
+                <input class="input-of-new-type" type="text">
+            </div>
+        </div>
+        <div class="container-level" id="3" th:if="${level3s} != null">
+            <div class="container-row">
+                <div class="row clearfix" th:each="level3 : ${level3s}">
+                    <input type="hidden" th:value="${level3.id}">
+                    <div class="information" th:classappend="(${level3Id} == ${level3.id}) ? 'selectedInformation':''" th:text="${level3.name}">information</div>
+                    <div class="modify"> <input type="text" th:value="${level3.name}"> </div>
+                    <div class="container-delete-update">
+                        <span class="update"><i class="fa-solid fa-pen"></i></span>
+                        <span class="delete"><i class="fa-solid fa-trash"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container-add">
+                <i class="add fa-solid fa-plus"></i>
+                <input class="input-of-new-type" type="text">
+            </div>
+        </div>
+        <div class="container-level" id="4" th:if="${level4s} != null">
+            <div class="container-row">
+                <div class="row clearfix" th:each="level4 : ${level4s}">
+                    <input type="hidden" th:value="${level4.id}">
+                    <div class="information" th:classappend="(${level4Id} == ${level4.id}) ? 'selectedInformation':''" th:text="${level4.name}">information</div>
+                    <div class="modify"> <input type="text" th:value="${level4.name}"> </div>
+                    <div class="container-delete-update">
+                        <span class="update"><i class="fa-solid fa-pen"></i></span>
+                        <span class="delete"><i class="fa-solid fa-trash"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container-add">
+                <i class="add fa-solid fa-plus"></i>
+                <input class="input-of-new-type" type="text">
+            </div>
+        </div>
+        <div class="container-level" id="5" th:if="${level5s} != null">
+            <div class="container-row">
+                <div class="row clearfix" th:each="level5 : ${level5s}">
+                    <input type="hidden" th:value="${level5.id}">
+                    <div class="information" th:text="${level5.name}">information</div>
+                    <div class="modify"> <input type="text" th:value="${level5.name}"> </div>
+                    <div class="container-delete-update">
+                        <span class="update"><i class="fa-solid fa-pen"></i></span>
+                        <span class="delete"><i class="fa-solid fa-trash"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container-add">
+                <i class="add fa-solid fa-plus"></i>
+                <input class="input-of-new-type" type="text">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" th:style="${message} != null ? 'display:block' : ''">
+        <div class="container-message">
+            <p id="message" th:text="${message}"></p>
+            <div class="container-button">
+                <button onclick="closeMessage()">Ok</button>
+            </div>
+        </div>
+        <div class="backdrop" onclick="closeMessage()"></div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/resources/js/type.js}"></script>
+</body>
+</html>

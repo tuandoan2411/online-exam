@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+    <style>
+        .ok{background-color: red;
+            height: 50px;
+        }
+        .pa{
+            color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <p>FIRST</p>
+    <p th:text="${param.tuan}"></p>
+    <div class="ok" th:class="(${param.i1} == 10) ? 'an' : 'gam'">div 1</div>
+    <div class="ok" th:class="(${param.i1} != 10) ? 'trung' : 'vang'">div 2</div>
+    <div class="ok" th:class="(${param.i1} == ${i2}) ? 'md' : 'mdnnn'">div 3</div>
+    <div class="ok" th:class="(${param.i1} != ${i2}) ? 'nam' : 'tuan anh'">div 4</div>
+    <div class="ok" th:class="(${param.s1} == 'str') ? 'a1' : 'g1'">div 5</div>
+    <div class="ok" th:class="(${param.s1} == 'other') ? 't1' : 'v1'">div 6</div>
+    <div class="ok" th:class="(${param.s1} == ${s2}) ? 'messi' : 'neymar'">div 7</div>
+    <div class="ok" th:class="(${param.s1} != ${s2}) ? 'khang' : 'khanh'">div 8</div>
+    <button th:if="${param.tuan} != null">my button ok</button>
+    <p th:class="${model} == 'm' ? 'thanh thuy' : 'bich tuyen'">thanh thuy</p>
+    <p th:class="${model} == 'mss' ? 'thanh thuy' : 'bich tuyen'">bich tuyen</p>
+
+    <!--<h1 th:if="${model} != null" th:text="${model}">1</h1>
+    <h2 th:if="${messi} != null" th:text="${messi}">2</h2>
+    <h2 th:if="${neymar} != null" th:text="${neymar}">2</h2>
+    <div class="ok">
+        <div th:each="item : ${array}">
+            <p th:text="${item}"></p>
+        </div>
+    </div>
+    <p>duoi array</p>
+    <div class="ok">
+        <div th:each="item : ${arrayEmpty}">
+            <p th:text="${item}"></p>
+        </div>
+    </div>
+
+    <p>duoi arrayEmpty</p>
+    <div class="ok">
+        <div th:each="item : ${arrayList}">
+            <p th:text="${item}"></p>
+        </div>
+    </div>-->
+    <p>day la paragragh</p>
+</body>
+</html>
