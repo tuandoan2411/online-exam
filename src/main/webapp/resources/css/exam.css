@@ -1,0 +1,76 @@
+.add-exam {
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.add-exam i {
+    color: green;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.exam {
+    max-width: 500px;
+    margin: auto auto 10px;
+    border: 1px solid black;
+    padding: 10px;
+    background-color: antiquewhite;
+}
+
+.container-title {
+    margin-bottom: 10px;
+}
+
+.title {
+    float: left;
+    width: 80%;
+    color: rgb(29, 39, 233);
+    text-decoration: none;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.title:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.container-delete-update {
+    float: right;
+    width: 20%;
+    text-align: right;
+    font-size: 20px;
+}
+
+.update:hover,
+.delete:hover {
+    cursor: pointer;
+}
+
+.update i {
+    color: rgb(139, 139, 19);
+}
+
+.delete i {
+    color: red;
+    margin-left: 5px;
+}
+
+.container-description {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.container-date-and-number-of-exams {
+    margin-bottom: 10px;
+}
+
+.container-date,
+container-number-of-exams {
+    float: left;
+    width: 50%;
+}

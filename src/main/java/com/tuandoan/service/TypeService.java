@@ -19,11 +19,21 @@ public interface TypeService {
 
     List<Level1> getLevel1s();
 
-    List<Level2> getLeve2sReferenceLevel1(Integer level1);
+    List<Level2> getLevel2sReferenceLevel1(Integer level1);
 
-    List<Level3> getLeve3sReferenceLevel2(Integer level2);
+    List<Level3> getLevel3sReferenceLevel2(Integer level2);
 
-    List<Level4> getLeve4sReferenceLevel3(Integer level3);
+    List<Level4> getLevel4sReferenceLevel3(Integer level3);
 
-    List<Level5> getLeve5sReferenceLevel4(Integer level4);
+    List<Level5> getLevel5sReferenceLevel4(Integer level4);
+
+    String getLevel1Name(Integer id);
+
+    String getLevel2Name(Integer id);
+
+    String getLevel3Name(Integer id);
+
+    String getLevel4Name(Integer id);
+
+    String getTypeInformationForExam(String type);
 }

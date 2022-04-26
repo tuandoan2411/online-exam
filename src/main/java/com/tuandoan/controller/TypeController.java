@@ -36,19 +36,19 @@ public class TypeController {
         model.addAttribute("level1s", level1s);
         if(level1 != null){
             model.addAttribute("level1Id", level1);
-            List<Level2> level2s = typeService.getLeve2sReferenceLevel1(level1);
+            List<Level2> level2s = typeService.getLevel2sReferenceLevel1(level1);
             model.addAttribute("level2s", level2s);
             if(level2 != null){
                 model.addAttribute("level2Id", level2);
-                List<Level3> level3s = typeService.getLeve3sReferenceLevel2(level2);
+                List<Level3> level3s = typeService.getLevel3sReferenceLevel2(level2);
                 model.addAttribute("level3s", level3s);
                 if(level3 != null) {
                     model.addAttribute("level3Id", level3);
-                    List<Level4> level4s = typeService.getLeve4sReferenceLevel3(level3);
+                    List<Level4> level4s = typeService.getLevel4sReferenceLevel3(level3);
                     model.addAttribute("level4s", level4s);
                     if (level4 != null) {
                         model.addAttribute("level4Id", level4);
-                        List<Level5> level5s = typeService.getLeve5sReferenceLevel4(level4);
+                        List<Level5> level5s = typeService.getLevel5sReferenceLevel4(level4);
                         model.addAttribute("level5s", level5s);
                     }
                 }

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam detail</title>
+    <style>
+        .container-exam {
+            max-width: 600px;
+            margin: auto;
+            background-color: rgba(38, 203, 244, 0.14);
+            border: 1px solid black;
+            padding: 20px;
+        }
+
+        .container-title {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .container-description {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .container-3-column {
+            background-color: lightgray;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .container-number-of-sentences,
+        .container-minutes,
+        .container-number-of-exams {
+            float: left;
+            width: 33%;
+        }
+
+        .container-sentence {
+            margin-bottom: 15px;
+        }
+
+        .container-sentence div {
+            margin-bottom: 5px;
+        }
+
+        .sentence {
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/a59c2f3f1f.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container-exam">
+        <div class="container-title" th:text="${exam.title}">Tên đề thi hihi</div>
+        <div class="container-description" th:text="${exam.description}">Mô tả</div>
+        <div class="container-3-column clearfix">
+            <div class="container-number-of-sentences">
+                <i class="fa-regular fa-square-check"></i>
+                <span th:text="|${exam.numberOfSentences} câu|">40 câu</span>
+            </div>
+            <div class="container-minutes">
+                <i class="fa-regular fa-clock"></i>
+                <span th:text="|${exam.minutes} phút|">60 phút</span>
+            </div>
+            <div class="container-number-of-exams">
+                <i class="fa-solid fa-user"></i>
+                <span th:text="|${exam.numberOfExams} lượt thi|">5 lượt thi</span>
+            </div>
+        </div>
+        <div class="container-sentence" th:each="sentence, stat : ${sentences}">
+            <div class="sentence" th:text="'Câu ' + (${stat.index} + 1)">Câu 1:</div>
+            <div th:text="${sentence.question}">Câu hỏi đây</div>
+            <div th:text="|A. ${sentence.a}|">A. TUÂN ĐOÀN</div>
+            <div th:text="|B. ${sentence.b}|">B. MINH TUẤN</div>
+            <div th:text="|C. ${sentence.c}|">C. MINH TRUNG</div>
+            <div th:text="|D. ${sentence.d}|">D. QUỐC VIỆT</div>
+        </div>
+    </div>
+</body>
+
+</html>

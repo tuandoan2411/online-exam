@@ -187,7 +187,7 @@ public class TypeDAOImpl implements TypeDAO{
     }
 
     @Override
-    public List<Level2> getLeve2sReferenceLevel1(Integer level1) {
+    public List<Level2> getLevel2sReferenceLevel1(Integer level1) {
         Session session = sessionFactory.getCurrentSession();
         Level1 l1 = session.get(Level1.class, level1);
         Query<Level2> getLevel2s = session.createQuery(
@@ -200,7 +200,7 @@ public class TypeDAOImpl implements TypeDAO{
     }
 
     @Override
-    public List<Level3> getLeve3sReferenceLevel2(Integer level2) {
+    public List<Level3> getLevel3sReferenceLevel2(Integer level2) {
         Session session = sessionFactory.getCurrentSession();
         Level2 l2 = session.get(Level2.class, level2);
         Query<Level3> getLevel3s = session.createQuery(
@@ -213,7 +213,7 @@ public class TypeDAOImpl implements TypeDAO{
     }
 
     @Override
-    public List<Level4> getLeve4sReferenceLevel3(Integer level3) {
+    public List<Level4> getLevel4sReferenceLevel3(Integer level3) {
         Session session = sessionFactory.getCurrentSession();
         Level3 l3 = session.get(Level3.class, level3);
         Query<Level4> getLevel4s = session.createQuery(
@@ -226,7 +226,7 @@ public class TypeDAOImpl implements TypeDAO{
     }
 
     @Override
-    public List<Level5> getLeve5sReferenceLevel4(Integer level4) {
+    public List<Level5> getLevel5sReferenceLevel4(Integer level4) {
         Session session = sessionFactory.getCurrentSession();
         Level4 l4 = session.get(Level4.class, level4);
         Query<Level5> getLevel5s = session.createQuery(
@@ -236,5 +236,33 @@ public class TypeDAOImpl implements TypeDAO{
                         Level5.class)
                 .setParameter("l4", l4);
         return getLevel5s.getResultList();
+    }
+
+    @Override
+    public String getLevel1Name(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        Level1 level1 = session.get(Level1.class, id);
+        return level1.getName();
+    }
+
+    @Override
+    public String getLevel2Name(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        Level2 level2 = session.get(Level2.class, id);
+        return level2.getName();
+    }
+
+    @Override
+    public String getLevel3Name(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        Level3 level3 = session.get(Level3.class, id);
+        return level3.getName();
+    }
+
+    @Override
+    public String getLevel4Name(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        Level4 level4 = session.get(Level4.class, id);
+        return level4.getName();
     }
 }

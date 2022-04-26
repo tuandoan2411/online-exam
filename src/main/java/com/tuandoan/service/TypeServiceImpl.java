@@ -61,25 +61,85 @@ public class TypeServiceImpl implements TypeService{
 
     @Override
     @Transactional
-    public List<Level2> getLeve2sReferenceLevel1(Integer level1) {
-        return typeDAO.getLeve2sReferenceLevel1(level1);
+    public List<Level2> getLevel2sReferenceLevel1(Integer level1) {
+        return typeDAO.getLevel2sReferenceLevel1(level1);
     }
 
     @Override
     @Transactional
-    public List<Level3> getLeve3sReferenceLevel2(Integer level2) {
-        return typeDAO.getLeve3sReferenceLevel2(level2);
+    public List<Level3> getLevel3sReferenceLevel2(Integer level2) {
+        return typeDAO.getLevel3sReferenceLevel2(level2);
     }
 
     @Override
     @Transactional
-    public List<Level4> getLeve4sReferenceLevel3(Integer level3) {
-        return typeDAO.getLeve4sReferenceLevel3(level3);
+    public List<Level4> getLevel4sReferenceLevel3(Integer level3) {
+        return typeDAO.getLevel4sReferenceLevel3(level3);
     }
 
     @Override
     @Transactional
-    public List<Level5> getLeve5sReferenceLevel4(Integer level4) {
-        return typeDAO.getLeve5sReferenceLevel4(level4);
+    public String getTypeInformationForExam(String type) {
+        System.out.println("type = " + type);
+        if(type == null) return null;
+        String typeInformation = "";
+        String[] splitType = type.split("-");
+        for(int i = 0; i < splitType.length; i++){
+            if(i < splitType.length - 1){
+                typeInformation += getLevelName(i + 1, Integer.parseInt(splitType[i])) + " - ";
+            }else {
+                typeInformation += getLevelName(i + 1, Integer.parseInt(splitType[i]));
+            }
+        }
+        System.out.println("typeInformation " + typeInformation);
+        System.out.println("END FUNCTION getTypeInformationForExam(String type)");
+        return typeInformation;
     }
+
+    @Override
+    @Transactional
+    public List<Level5> getLevel5sReferenceLevel4(Integer level4) {
+        return typeDAO.getLevel5sReferenceLevel4(level4);
+    }
+
+    @Override
+    @Transactional
+    public String getLevel1Name(Integer id) {
+        return typeDAO.getLevel1Name(id);
+    }
+
+    @Override
+    @Transactional
+    public String getLevel2Name(Integer id) {
+        return typeDAO.getLevel2Name(id);
+    }
+
+    @Override
+    @Transactional
+    public String getLevel3Name(Integer id) {
+        return typeDAO.getLevel3Name(id);
+    }
+
+    @Override
+    @Transactional
+    public String getLevel4Name(Integer id) {
+        return typeDAO.getLevel4Name(id);
+    }
+
+    private String getLevelName(int level, int id) {
+        System.out.println("getLevelName(int level, int id)");
+        switch(level){
+            case 1:
+                return getLevel1Name(id);
+            case 2:
+                return getLevel2Name(id);
+            case 3:
+                return getLevel3Name(id);
+            case 4:
+                return getLevel4Name(id);
+        }
+        return null;
+    }
+
+
 }

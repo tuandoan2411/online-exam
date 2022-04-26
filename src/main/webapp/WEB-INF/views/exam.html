@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exam</title>
+    <link rel="stylesheet" href="/resources/css/exam.css">
+    <script src="https://kit.fontawesome.com/a59c2f3f1f.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<div>
+    <i class="add-exam fa-solid fa-plus" onclick="addExam()"></i>
+    <label class="add-exam" onclick="addExam()">Tạo đề</label>
+</div>
+
+<div class="container-exam">
+    <div class="exam" th:each="exam : ${exams}">
+        <div class="container-title clearfix">
+            <a th:href="@{/exam/showExam(exam-id=${exam.id})}" class="title" th:text="${exam.title}">ten de 1</a>
+            <div th:id="${exam.id}" class="container-delete-update">
+                <span class="update"><i class="fa-solid fa-pen"></i></span>
+                <span class="delete"><i class="fa-solid fa-trash"></i></span>
+            </div>
+        </div>
+        <div class="container-description" th:text="${exam.description}">
+            Mô tả 1
+        </div>
+        <div class="container-date-and-number-of-exams clearfix">
+            <div class="container-date">
+                <i class="fa-regular fa-calendar-days"></i>
+                <span th:text="${exam.date}">Ngay</span>
+            </div>
+            <div class="container-number-of-exams">
+                <i class="fa-solid fa-user"></i>
+                <span th:text="|${exam.numberOfExams} lượt thi|">So luot thi</span>
+            </div>
+        </div>
+        <div class="container-type" th:text="${exam.typeInformation}">Loai de thi</div>
+    </div>
+</div>
+
+<script>
+    const updates = document.getElementsByClassName("update");
+    for (let i = 0; i < updates.length; i++) {
+        updates[i].addEventListener("click", function() {
+            const exam_id = updates[i].parentElement.id;
+            window.location.href = "/exam/showExamForUpdate?exam-id=" + exam_id;
+        })
+    }
+
+    const deletes = document.getElementsByClassName("delete");
+    for (let i = 0; i < deletes.length; i++) {
+        deletes[i].addEventListener("click", function() {
+            const exam_id = deletes[i].parentElement.id;
+            window.location.href = "/exam/delete?exam-id=" + exam_id;
+        })
+    }
+
+    function addExam() {
+        window.location.href = "/exam/addExam";
+    }
+</script>
+</body>
+
+</html>
