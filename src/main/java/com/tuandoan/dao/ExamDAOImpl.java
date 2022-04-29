@@ -26,6 +26,12 @@ public class ExamDAOImpl implements ExamDAO{
     }
 
     @Override
+    public void updateExam(Exam exam) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(exam);
+    }
+
+    @Override
     public Exam getExam(Integer examId) {
         Session session = sessionFactory.getCurrentSession();
         return session.get(Exam.class, examId);

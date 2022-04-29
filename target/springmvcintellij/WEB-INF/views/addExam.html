@@ -47,12 +47,12 @@
         }
         
         .exam-form{
-            background-color: pink;
+            background-color: rgba(150, 188, 98, 0.293);
             margin-top: 10px;
         }
 
         .container-sentence{
-            background-color: orange;
+            background-color: #ADEFD1FF;
         }
         
         #add-sentence, #save-exam{
@@ -111,7 +111,7 @@
     <script src="https://kit.fontawesome.com/a59c2f3f1f.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container-choose-type" onclick="showOrHiddenType()">
+    <div class="container-choose-type" onclick="showOrHiddenType()" th:if="(not ${isUpdate})">
         <span th:text="${examSessionDTO.typeInformation} ?: 'Chọn loại'"></span>
         <i class="angle-down fa-solid fa-angle-down"></i>
     </div>
@@ -173,6 +173,8 @@
     </div>
 
     <form class="exam-form" action="#" th:action="@{/exam/addExam}" th:object="${sentenceSessionDTOs}" method="post" th:if="${examSessionDTO.tempType} != null">
+        <input type="hidden" id="action" name="action">
+        <input type="hidden" id="is-update" th:value="${isUpdate}" name="is-update" />
         <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasTitleDefault})">
             <label for="title">Tên đề thi</label>
             <input id="title" type="text" th:field="${examSessionDTO.title}">
@@ -188,12 +190,14 @@
         <div class="submit-btn">
             <button id="add-sentence" onclick="addNewSentence()" type="submit">Thêm câu hỏi</button>
         </div>
-        <input type="hidden" id="action" name="action">
         <div class="container-sentence column-2" th:each="sentence, stat : ${sentenceSessionDTOs.sentenceSessionDTOList}">
             <div class="column-2 clearfix" th:if="${examSessionDTO.level5s} != null">
                 <label>Chọn loại cho câu này</label>
                 <select th:field="*{sentenceSessionDTOList[__${stat.index}__].type}">
-                    <option th:each="level5 : ${examSessionDTO.level5s}" th:value="${level5.id}" th:text="${level5.name}"></option>
+                    <option th:each="level5 : ${examSessionDTO.level5s}"
+                            th:value="${level5.id}"
+                            th:text="${level5.name}"
+                    ></option>
                 </select>
             </div>
             <div class="column-2 clearfix">
@@ -231,8 +235,8 @@
                 <span th:id="${stat.index}" class="delete" onclick="deleteSentence(this)"><i class="fa-solid fa-trash"></i>Xoá câu hỏi</span>
             </div>
         </div>
-        <div class="submit-btn">
-            <input id="save-exam" onclick="saveExam()" type="submit" value="Lưu đề" th:if="${not #lists.isEmpty(sentenceSessionDTOs.sentenceSessionDTOList)}">
+        <div class="submit-btn" th:if="${not #lists.isEmpty(sentenceSessionDTOs.sentenceSessionDTOList)}">
+            <input id="save-exam" onclick="saveExam()" type="submit" value="Lưu đề">
         </div>
     </form>
 
@@ -281,15 +285,25 @@
 
         function addNewSentence() {
             document.getElementById("action").value = "ADD_NEW_QUESTION";
+            if(document.getElementById("is-update").value === ""){
+                document.getElementById("is-update").value = "false";
+            }
         }
 
         function saveExam() {
             document.getElementById("action").value = "SAVE_EXAM";
+            if(document.getElementById("is-update").value === ""){
+                document.getElementById("is-update").value = "false";
+            }
         }
 
         function deleteSentence(object) {
             console.log(object.id);
-            window.location.href = "/exam/deleteSentenceInSession?sentence=" + object.id;
+            let url = "/exam/deleteSentenceInSession?sentence=" + object.id;
+            if(document.getElementById("is-update").value === "true"){
+                url += "&is-update=true";
+            }
+            window.location.href = url;
         }
     </script>
 </body>

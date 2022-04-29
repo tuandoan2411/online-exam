@@ -26,6 +26,12 @@ public class ExamServiceImpl implements ExamService{
 
     @Override
     @Transactional
+    public void updateExam(Exam exam) {
+        examDAO.updateExam(exam);
+    }
+
+    @Override
+    @Transactional
     public Exam getExam(Integer examId) {
         return examDAO.getExam(examId);
     }

@@ -3,6 +3,7 @@ package com.tuandoan.dto;
 import com.tuandoan.entity.Answer;
 
 public class SentenceSessionDTO {
+    private int id;
     private String question;
     private String a;
     private String b;
@@ -11,6 +12,14 @@ public class SentenceSessionDTO {
     private Answer answer;
     private String solution;
     private String type;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getQuestion() {
         return question;
@@ -78,14 +87,16 @@ public class SentenceSessionDTO {
 
     @Override
     public String toString() {
-        return "QuestionDTO{" +
-                "question='" + question + '\'' +
+        return "SentenceSessionDTO{" +
+                "id=" + id +
+                ", question='" + question + '\'' +
                 ", a='" + a + '\'' +
                 ", b='" + b + '\'' +
                 ", c='" + c + '\'' +
                 ", d='" + d + '\'' +
                 ", answer=" + answer +
                 ", solution='" + solution + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

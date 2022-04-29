@@ -8,6 +8,8 @@ import java.util.List;
 public interface ExamDAO {
     void addExam(Exam exam);
 
+    void updateExam(Exam exam);
+
     Exam getExam(Integer examId);
 
     boolean allowDelete(Integer examId);

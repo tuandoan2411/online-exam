@@ -8,6 +8,8 @@ import java.util.List;
 public interface ExamService {
     void addExam(Exam exam);
 
+    void updateExam(Exam exam);
+
     Exam getExam(Integer examId);
 
     boolean allowDelete(Integer examId);

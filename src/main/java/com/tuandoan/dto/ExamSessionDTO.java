@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ExamSessionDTO {
+    private int id;
     private String title;
     private boolean hasTitleDefault;
     private String description;
@@ -16,7 +17,16 @@ public class ExamSessionDTO {
     private String typeInformation;
     private LocalDate date;
     private int numberOfSentences;
+    private int numberOfExams;
     private List<Level5> level5s;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -104,6 +114,14 @@ public class ExamSessionDTO {
 
     public void setHasMinutesDefault(boolean hasMinutesDefault) {
         this.hasMinutesDefault = hasMinutesDefault;
+    }
+
+    public int getNumberOfExams() {
+        return numberOfExams;
+    }
+
+    public void setNumberOfExams(int numberOfExams) {
+        this.numberOfExams = numberOfExams;
     }
 
     public void clean() {

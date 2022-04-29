@@ -4,15 +4,13 @@ import com.tuandoan.constant.TypeName;
 import com.tuandoan.dto.*;
 import com.tuandoan.entity.*;
 import com.tuandoan.service.ExamService;
+import com.tuandoan.service.SentenceService;
 import com.tuandoan.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +21,13 @@ import java.util.List;
 public class ExamController {
     private TypeService typeService;
     private ExamService examService;
+    private SentenceService sentenceService;
 
     @Autowired
-    public ExamController(TypeService typeService, ExamService examService){
+    public ExamController(TypeService typeService, ExamService examService, SentenceService sentenceService){
         this.typeService = typeService;
         this.examService = examService;
+        this.sentenceService = sentenceService;
     }
 
     @RequestMapping("/showExam")
@@ -35,14 +35,12 @@ public class ExamController {
                            Model model){
         model.addAttribute("exam", examService.getExam(examId));
         model.addAttribute("sentences", examService.getSentencesOfExam(examId));
-
         return "examDetail";
     }
 
     @RequestMapping("")
     public String exam(Model model){
         List<Exam> exams = examService.getAllExam();
-        System.out.println("AFTER examService.getAllExam();");
         List<ExamDTO> examDTOs = new ArrayList<>();
         for(Exam exam : exams){
             ExamDTO examDTO = new ExamDTO();
@@ -66,20 +64,12 @@ public class ExamController {
                                   @RequestParam(required = false) String typeId,
                                   @RequestParam(required = false) String typeInformation,
                                   @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
+                                  @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
                                   Model model){
-        System.out.println("showFormAddExam()");
-        System.out.println("typeId " + typeId);
-        System.out.println("typeInfor " + typeInformation);
-
-        List<Level1> l1s = typeService.getLevel1s();
-        List<Level1DTO> level1s = new ArrayList<>();
-        for (Level1 l1 : l1s) {
-            if (typeService.hasReferenced(1, l1.getId())) {
-                level1s.add(new Level1DTO(l1.getId(), l1.getName(), true));
-            } else {
-                level1s.add(new Level1DTO(l1.getId(), l1.getName(), false));
-            }
+        if(sentenceDTOWrapper.getSentenceSessionDTOList().size() > 0){
+            sentenceDTOWrapper.getSentenceSessionDTOList().clear();
         }
+        List<Level1DTO> level1s = getAllLevel1(typeService);
         model.addAttribute("level1s", level1s);
         if(typeId == null) {
             if (level1 != null) {
@@ -178,7 +168,95 @@ public class ExamController {
     public String addExam(@ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
                           @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
                           @RequestParam String action,
+                          @RequestParam(name = "is-update", required = false) Boolean isUpdate,
                           Model model){
+        List<Level1DTO> level1s = getAllLevel1(typeService);
+        model.addAttribute("level1s", level1s);
+        if(action.equals("ADD_NEW_QUESTION")){
+            for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()){
+                System.out.println(sentenceSessionDTO);
+            }
+            sentenceDTOWrapper.getSentenceSessionDTOList().add(new SentenceSessionDTO());
+            if(isUpdate){
+                model.addAttribute("isUpdate", true);
+            }
+        }else {
+            System.out.println("SAVE_EXAM");
+            if(isUpdate){
+                System.out.println("Update");
+                Exam exam = new Exam();
+                exam.setId(examSessionDTO.getId());
+                System.out.println("examSessionDTO.getId() " + examSessionDTO.getId());
+                exam.setTitle(examSessionDTO.getTitle());
+                exam.setDescription(examSessionDTO.getDescription());
+                exam.setMinutes(examSessionDTO.getMinutes());
+                exam.setDate(examSessionDTO.getDate());
+                exam.setNumberOfSentences(sentenceDTOWrapper.getSentenceSessionDTOList().size());
+                exam.setType(examSessionDTO.getTempType());
+                exam.setNumberOfExams(examSessionDTO.getNumberOfExams());
+                examService.updateExam(exam);
+
+                for(int i = 0; i < sentenceDTOWrapper.getSentenceSessionDTOList().size(); i++) {
+                    SentenceSessionDTO sentenceSessionDTO = sentenceDTOWrapper.getSentenceSessionDTOList().get(i);
+                    System.out.println(sentenceSessionDTO);
+                    Sentence sentence = new Sentence();
+                    sentence.setId(sentenceSessionDTO.getId());
+                    sentence.setQuestion(sentenceSessionDTO.getQuestion());
+                    sentence.setA(sentenceSessionDTO.getA());
+                    sentence.setB(sentenceSessionDTO.getB());
+                    sentence.setC(sentenceSessionDTO.getC());
+                    sentence.setD(sentenceSessionDTO.getD());
+                    sentence.setAnswer(sentenceSessionDTO.getAnswer());
+                    sentence.setSolution(sentenceSessionDTO.getSolution());
+                    if (examSessionDTO.getLevel5s() != null && !examSessionDTO.getLevel5s().isEmpty()){
+                        sentence.setType(examSessionDTO.getTempType() + "-" + sentenceSessionDTO.getType());
+                    }else {
+                        sentence.setType(examSessionDTO.getTempType());
+                    }
+                    sentenceService.save(sentence, examSessionDTO.getId());
+                    //sentence.setExam(e);
+                    //sentenceService.saveOrUpdate(sentence);
+                }
+            }else{
+                System.out.println("ADD");
+                Exam exam = new Exam();
+                exam.setTitle(examSessionDTO.getTitle());
+                exam.setDescription(examSessionDTO.getDescription());
+                exam.setMinutes(examSessionDTO.getMinutes());
+                exam.setDate(LocalDate.now());
+                exam.setNumberOfSentences(sentenceDTOWrapper.getSentenceSessionDTOList().size());
+                exam.setType(examSessionDTO.getTempType());
+                System.out.println("EXAMMMMMMMMMMMMMMMMMMMMMMMMMM");
+                System.out.println(exam);
+                for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()){
+                    Sentence sentence = new Sentence();
+                    sentence.setQuestion(sentenceSessionDTO.getQuestion());
+                    sentence.setA(sentenceSessionDTO.getA());
+                    sentence.setB(sentenceSessionDTO.getB());
+                    sentence.setC(sentenceSessionDTO.getC());
+                    sentence.setD(sentenceSessionDTO.getD());
+                    sentence.setAnswer(sentenceSessionDTO.getAnswer());
+                    sentence.setSolution(sentenceSessionDTO.getSolution());
+                    if (examSessionDTO.getLevel5s() != null && !examSessionDTO.getLevel5s().isEmpty()){
+                        sentence.setType(examSessionDTO.getTempType() + "-" + sentenceSessionDTO.getType());
+                    }else {
+                        sentence.setType(examSessionDTO.getTempType());
+                    }
+                    System.out.println(sentence);
+                    exam.addSentence(sentence);
+                }
+                examService.addExam(exam);
+            }
+
+            sentenceDTOWrapper.getSentenceSessionDTOList().clear();
+            examSessionDTO.clean();
+            return "redirect:/exam";
+        }
+
+        return "addExam";
+    }
+
+    static List<Level1DTO> getAllLevel1(TypeService typeService) {
         List<Level1> l1s = typeService.getLevel1s();
         List<Level1DTO> level1s = new ArrayList<>();
         for (Level1 l1 : l1s) {
@@ -188,67 +266,82 @@ public class ExamController {
                 level1s.add(new Level1DTO(l1.getId(), l1.getName(), false));
             }
         }
-        model.addAttribute("level1s", level1s);
-
-        if(sentenceDTOWrapper != null){
-            System.out.println("sentenceDTOWrapper != null");
-        }
-        if(action.equals("ADD_NEW_QUESTION")){
-            System.out.println("ADD_NEW_QUESTION");
-            for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()){
-                System.out.println(sentenceSessionDTO);
-            }
-            sentenceDTOWrapper.getSentenceSessionDTOList().add(new SentenceSessionDTO());
-        }else {
-            System.out.println("SAVE_EXAM");
-            Exam exam = new Exam();
-            exam.setTitle(examSessionDTO.getTitle());
-            exam.setDescription(examSessionDTO.getDescription());
-            exam.setMinutes(examSessionDTO.getMinutes());
-            exam.setDate(LocalDate.now());
-            exam.setNumberOfSentences(sentenceDTOWrapper.getSentenceSessionDTOList().size());
-            exam.setType(examSessionDTO.getTempType());
-            System.out.println("EXAMMMMMMMMMMMMMMMMMMMMMMMMMM");
-            System.out.println(exam);
-            for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()){
-                Sentence sentence = new Sentence();
-                sentence.setQuestion(sentenceSessionDTO.getQuestion());
-                sentence.setA(sentenceSessionDTO.getA());
-                sentence.setB(sentenceSessionDTO.getB());
-                sentence.setC(sentenceSessionDTO.getC());
-                sentence.setD(sentenceSessionDTO.getD());
-                sentence.setAnswer(sentenceSessionDTO.getAnswer());
-                sentence.setSolution(sentenceSessionDTO.getSolution());
-                if (examSessionDTO.getLevel5s() != null && !examSessionDTO.getLevel5s().isEmpty()){
-                    sentence.setType(examSessionDTO.getTempType() + "-" + sentenceSessionDTO.getType());
-                }else {
-                    sentence.setType(examSessionDTO.getTempType());
-                }
-                System.out.println(sentence);
-                exam.addSentence(sentence);
-            }
-            examService.addExam(exam);
-            sentenceDTOWrapper.getSentenceSessionDTOList().clear();
-            examSessionDTO.clean();
-            return "redirect:/exam";
-        }
-
-        return "addExam";
+        return level1s;
     }
 
     @RequestMapping("/deleteSentenceInSession")
     public String deleteSentenceInSession(@RequestParam int sentence,
-                                          @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper){
+                                          @RequestParam(name = "is-update") Boolean isUpdate,
+                                          @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
+                                          Model model){
+        Integer sentenceId = sentenceDTOWrapper.getSentenceSessionDTOList().get(sentence).getId();
         sentenceDTOWrapper.getSentenceSessionDTOList().remove(sentence);
         System.out.println("Removed " + sentence);
+        if(isUpdate){
+            sentenceService.delete(sentenceId);
+            model.addAttribute("isUpdate", true);
+            return "addExam";
+        }
         return "redirect:addExam";
     }
 
     @RequestMapping("/showExamForUpdate")
     public String showExamForUpdate(@RequestParam(name = "exam-id") Integer examId,
+                                    @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
+                                    @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
                                     Model model){
-        model.addAttribute("exam", examService.getExam(examId));
-        return "updateExam";
+        examSessionDTO.clean();
+        Exam exam = examService.getExam(examId);
+        examSessionDTO.setId(exam.getId());
+        examSessionDTO.setTitle(exam.getTitle());
+        examSessionDTO.setDescription(exam.getDescription());
+        examSessionDTO.setMinutes(exam.getMinutes());
+        examSessionDTO.setDate(exam.getDate());
+        examSessionDTO.setNumberOfSentences(exam.getNumberOfSentences());
+        examSessionDTO.setTempType(exam.getType());
+        examSessionDTO.setNumberOfExams(exam.getNumberOfExams());
+
+        String typeId = exam.getType();
+        String[] levels = typeId.split("-");
+        sentenceDTOWrapper.getSentenceSessionDTOList().clear();
+        List<Sentence> sentences = examService.getSentencesOfExam(examId);
+        for(Sentence sentence : sentences){
+            SentenceSessionDTO sentenceSessionDTO = new SentenceSessionDTO();
+            sentenceSessionDTO.setId(sentence.getId());
+            sentenceSessionDTO.setQuestion(sentence.getQuestion());
+            sentenceSessionDTO.setA(sentence.getA());
+            sentenceSessionDTO.setB(sentence.getB());
+            sentenceSessionDTO.setC(sentence.getC());
+            sentenceSessionDTO.setD(sentence.getD());
+            sentenceSessionDTO.setAnswer(sentence.getAnswer());
+            sentenceSessionDTO.setSolution(sentence.getSolution());
+            sentenceDTOWrapper.getSentenceSessionDTOList().add(sentenceSessionDTO);
+        }
+        if(levels.length == 4){
+            Integer level1Id = Integer.parseInt(levels[0]);
+            String level1Name = typeService.getLevel1Name(level1Id);
+            if(level1Name.equals(TypeName.DE_KIEM_TRA)){
+                Integer level2Id = Integer.parseInt(levels[1]);
+                String level2Name = typeService.getLevel2Name(level2Id);
+                if(level2Name.equals(TypeName.DE_15_PHUT) || level2Name.equals(TypeName.DE_1_TIET)){
+                    examSessionDTO.setHasTitleDefault(true);
+                    examSessionDTO.setHasDescriptionDefault(true);
+                    examSessionDTO.setHasMinutesDefault(true);
+                }
+                if(level2Name.equals(TypeName.DE_15_PHUT) || level2Name.equals(TypeName.DE_1_TIET)
+                        || level2Name.equals(TypeName.DE_HOC_KY)){
+                    Integer level4Id = Integer.parseInt(levels[3]);
+                    examSessionDTO.setLevel5s(typeService.getLevel5sReferenceLevel4(level4Id));
+                    for(int i = 0; i < sentences.size(); i++){
+                        Sentence sentence = sentences.get(i);
+                        String[] levelsOfSentence = sentence.getType().split("-");
+                        sentenceDTOWrapper.getSentenceSessionDTOList().get(i).setType(levelsOfSentence[levelsOfSentence.length - 1]);
+                    }
+                }
+            }
+        }
+        model.addAttribute("isUpdate", true);
+        return "addExam";
     }
 
     @RequestMapping("/delete")
@@ -260,20 +353,21 @@ public class ExamController {
     }
 
     @RequestMapping("s")
-    public void s(){
-        System.out.println("s()");
+    public String s(){
+        Exam e = examService.getExam(4);
+        e.setTitle("my title");
+        e.setDescription("my description");
+        System.out.println(e);
+        return "hello";
     }
 
     @ModelAttribute("examSessionDTO")
     public ExamSessionDTO examSessionDTO(){
-        System.out.println("examSessionDTO()");
         return new ExamSessionDTO();
     }
 
     @ModelAttribute("sentenceSessionDTOs")
     public SentenceDTOWrapper sentenceDTOWrapper(){
-        System.out.println("*****");
-        System.out.println("sentenceDTOWrapper()");
         return new SentenceDTOWrapper();
     }
 
