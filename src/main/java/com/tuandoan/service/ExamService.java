@@ -1,22 +1,26 @@
 package com.tuandoan.service;
 
+import com.tuandoan.dto.ExamDTO;
+import com.tuandoan.dto.SentenceDTO;
 import com.tuandoan.entity.Exam;
 import com.tuandoan.entity.Sentence;
 
 import java.util.List;
 
 public interface ExamService {
+    void addExam(ExamDTO examDTO);
+
     void addExam(Exam exam);
 
-    void updateExam(Exam exam);
+    void updateExam(ExamDTO exam);
 
-    Exam getExam(Integer examId);
+    ExamDTO getExam(Integer examId);
 
     boolean allowDelete(Integer examId);
 
     void delete(Integer examId);
 
-    List<Exam> getAllExam();
+    List<ExamDTO> getAllExam();
 
-    List<Sentence> getSentencesOfExam(Integer examId);
+    List<SentenceDTO> getSentencesOfExam(Integer examId);
 }

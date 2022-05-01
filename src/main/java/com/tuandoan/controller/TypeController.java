@@ -67,7 +67,7 @@ public class TypeController {
                 model.addAttribute("message", DELETE_SUCCESSFUL);
             }
         }
-        return "type";
+        return "type/type";
     }
 
     @RequestMapping("/addUpdateType")

@@ -1,7 +1,8 @@
 package com.tuandoan.service;
 
+import com.tuandoan.convert.ConvertSentenceDTOToSentence;
 import com.tuandoan.dao.SentenceDAO;
-import com.tuandoan.entity.Sentence;
+import com.tuandoan.dto.SentenceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,7 @@ public class SentenceServiceImpl implements SentenceService{
 
     @Override
     @Transactional
-    public void saveOrUpdate(Sentence sentence) {
-        sentenceDAO.saveOrUpdate(sentence);
-    }
-
-    @Override
-    @Transactional
-    public void save(Sentence sentence, int examId) {
-        sentenceDAO.save(sentence, examId);
+    public void saveOrUpdate(SentenceDTO sentence, int examId) {
+        sentenceDAO.saveOrUpdate(ConvertSentenceDTOToSentence.convert(sentence), examId);
     }
 }

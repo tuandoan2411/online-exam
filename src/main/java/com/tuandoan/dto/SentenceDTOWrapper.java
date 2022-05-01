@@ -14,7 +14,7 @@ public class SentenceDTOWrapper {
         return sentenceSessionDTOList;
     }
 
-    public void setsentenceSessionDTOList(List<SentenceSessionDTO> sentenceSessionDTOList) {
+    public void setSentenceSessionDTOList(List<SentenceSessionDTO> sentenceSessionDTOList) {
         this.sentenceSessionDTOList = sentenceSessionDTOList;
     }
 }

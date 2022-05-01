@@ -111,12 +111,6 @@ public class Exam {
         this.sentences = sentences;
     }
 
-    public void addSentence(Sentence sentence){
-        if(sentences == null) sentences = new ArrayList<>();
-        sentences.add(sentence);
-        sentence.setExam(this);
-    }
-
     @Override
     public String toString() {
         return "Exam{" +

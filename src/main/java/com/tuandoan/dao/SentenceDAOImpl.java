@@ -28,13 +28,7 @@ public class SentenceDAOImpl implements SentenceDAO{
     }
 
     @Override
-    public void saveOrUpdate(Sentence sentence) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(sentence);
-    }
-
-    @Override
-    public void save(Sentence sentence, int examId) {
+    public void saveOrUpdate(Sentence sentence, int examId) {
         Session session = sessionFactory.getCurrentSession();
         Exam exam = session.get(Exam.class, examId);
         sentence.setExam(exam);

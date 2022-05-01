@@ -1,12 +1,18 @@
 package com.tuandoan.service;
 
+import com.tuandoan.convert.ConvertExamDTOToExam;
+import com.tuandoan.convert.ConvertExamToExamDTO;
+import com.tuandoan.convert.ConvertSentenceToSentenceDTO;
 import com.tuandoan.dao.ExamDAO;
+import com.tuandoan.dto.ExamDTO;
+import com.tuandoan.dto.SentenceDTO;
 import com.tuandoan.entity.Exam;
 import com.tuandoan.entity.Sentence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,20 +26,29 @@ public class ExamServiceImpl implements ExamService{
 
     @Override
     @Transactional
+    public void addExam(ExamDTO examDTO) {
+        System.out.println("ServiceImpl addExam(ExamDTO examDTO)");
+        System.out.println(examDTO);
+        examDAO.addExam(ConvertExamDTOToExam.convert(examDTO));
+    }
+
+    @Override
+    @Transactional
     public void addExam(Exam exam) {
+        System.out.println("addExam(Exam exam)");
         examDAO.addExam(exam);
     }
 
     @Override
     @Transactional
-    public void updateExam(Exam exam) {
-        examDAO.updateExam(exam);
+    public void updateExam(ExamDTO examDTO) {
+        examDAO.updateExam(ConvertExamDTOToExam.convert(examDTO));
     }
 
     @Override
     @Transactional
-    public Exam getExam(Integer examId) {
-        return examDAO.getExam(examId);
+    public ExamDTO getExam(Integer examId) {
+        return ConvertExamToExamDTO.convert(examDAO.getExam(examId));
     }
 
     @Override
@@ -50,13 +65,23 @@ public class ExamServiceImpl implements ExamService{
 
     @Override
     @Transactional
-    public List<Exam> getAllExam() {
-        return examDAO.getAllExam();
+    public List<ExamDTO> getAllExam() {
+        List<Exam> exams = examDAO.getAllExam();
+        List<ExamDTO> examDTOs = new ArrayList<>();
+        for(Exam exam : exams){
+            examDTOs.add(ConvertExamToExamDTO.convert(exam));
+        }
+        return examDTOs;
     }
 
     @Override
     @Transactional
-    public List<Sentence> getSentencesOfExam(Integer examId) {
-        return examDAO.getSentencesOfExam(examId);
+    public List<SentenceDTO> getSentencesOfExam(Integer examId) {
+        List<Sentence> sentences = examDAO.getSentencesOfExam(examId);
+        List<SentenceDTO> sentenceDTOs = new ArrayList<>();
+        for(Sentence sentence : sentences){
+            sentenceDTOs.add(ConvertSentenceToSentenceDTO.convert(sentence));
+        }
+        return sentenceDTOs;
     }
 }

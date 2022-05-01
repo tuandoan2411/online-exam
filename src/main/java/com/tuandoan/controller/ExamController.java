@@ -1,6 +1,7 @@
 package com.tuandoan.controller;
 
 import com.tuandoan.constant.TypeName;
+import com.tuandoan.convert.ConvertExamDTOToExam;
 import com.tuandoan.dto.*;
 import com.tuandoan.entity.*;
 import com.tuandoan.service.ExamService;
@@ -30,48 +31,40 @@ public class ExamController {
         this.sentenceService = sentenceService;
     }
 
-    @RequestMapping("/showExam")
-    public String showExam(@RequestParam(name = "exam-id") Integer examId,
-                           Model model){
-        model.addAttribute("exam", examService.getExam(examId));
-        model.addAttribute("sentences", examService.getSentencesOfExam(examId));
-        return "examDetail";
-    }
-
     @RequestMapping("")
     public String exam(Model model){
-        List<Exam> exams = examService.getAllExam();
-        List<ExamDTO> examDTOs = new ArrayList<>();
-        for(Exam exam : exams){
-            ExamDTO examDTO = new ExamDTO();
-            examDTO.setId(exam.getId());
-            examDTO.setTitle(exam.getTitle());
-            examDTO.setDescription(exam.getDescription());
-            examDTO.setDate(exam.getDate());
-            examDTO.setNumberOfExams(exam.getNumberOfExams());
-            examDTO.setTypeInformation(typeService.getTypeInformationForExam(exam.getType()));
-            examDTOs.add(examDTO);
-        }
+        List<ExamDTO> examDTOs = examService.getAllExam();
         model.addAttribute("exams", examDTOs);
-        return "exam";
+        return "exam/exam";
+    }
+
+    @RequestMapping("/showExamDetail")
+    public String showExamDetail(@RequestParam(name = "exam-id") Integer examId,
+                           Model model){
+        ExamDTO examDTO = examService.getExam(examId);
+        model.addAttribute("exam", examDTO);
+        model.addAttribute("sentences", examDTO.getSentenceDTOs());
+        return "exam/examDetail";
     }
 
     @GetMapping("/addExam")
-    public String showFormAddExam(@RequestParam(required = false) Integer level1,
-                                  @RequestParam(required = false) Integer level2,
-                                  @RequestParam(required = false) Integer level3,
-                                  @RequestParam(required = false) Integer level4,
-                                  @RequestParam(required = false) String typeId,
-                                  @RequestParam(required = false) String typeInformation,
-                                  @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
-                                  @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
-                                  Model model){
+    public String showFormForAdd(@RequestParam(required = false) Integer level1,
+                                 @RequestParam(required = false) Integer level2,
+                                 @RequestParam(required = false) Integer level3,
+                                 @RequestParam(required = false) Integer level4,
+                                 @RequestParam(required = false) String typeId,
+                                 @RequestParam(required = false) String typeInformation,
+                                 @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
+                                 @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
+                                 Model model){
+        examSessionDTO.clean();
         if(sentenceDTOWrapper.getSentenceSessionDTOList().size() > 0){
             sentenceDTOWrapper.getSentenceSessionDTOList().clear();
         }
         List<Level1DTO> level1s = getAllLevel1(typeService);
         model.addAttribute("level1s", level1s);
         if(typeId == null) {
+            // Show next levels
             if (level1 != null) {
                 model.addAttribute("isShowType", true);
                 model.addAttribute("level1Id", level1);
@@ -126,134 +119,11 @@ public class ExamController {
                 }
             }
         }else {
-            examSessionDTO.clean();
-            examSessionDTO.setTempType(typeId);
-            examSessionDTO.setTypeInformation(typeInformation);
-            String[] levels = typeId.split("-");
-            if(levels.length == 4){
-                Integer level1Id = Integer.parseInt(levels[0]);
-                String level1Name = typeService.getLevel1Name(level1Id);
-                if(level1Name.equals(TypeName.DE_KIEM_TRA)){
-                    Integer level2Id = Integer.parseInt(levels[1]);
-                    String level2Name = typeService.getLevel2Name(level2Id);
-                    if(level2Name.equals(TypeName.DE_15_PHUT)){
-                        setDefaultTitleDescriptionMinutes(examSessionDTO, "Đề kiểm tra 15 phút", 15);
-                        /*examSessionDTO.setTitle("Đề kiểm tra 15 phút");
-                        examSessionDTO.setHasTitleDefault(true);
-                        examSessionDTO.setDescription("");
-                        examSessionDTO.setHasDescriptionDefault(true);
-                        examSessionDTO.setMinutes(15);
-                        examSessionDTO.setHasMinutesDefault(true);*/
-                    }else if(level2Name.equals(TypeName.DE_1_TIET)){
-                        setDefaultTitleDescriptionMinutes(examSessionDTO, "Đề kiểm tra 1 tiết", 45);
-                        /*examSessionDTO.setTitle("Đề kiểm tra 1 tiết");
-                        examSessionDTO.setHasTitleDefault(true);
-                        examSessionDTO.setDescription("");
-                        examSessionDTO.setHasDescriptionDefault(true);
-                        examSessionDTO.setMinutes(45);
-                        examSessionDTO.setHasMinutesDefault(true);*/
-                    }
-                    if(level2Name.equals(TypeName.DE_15_PHUT) || level2Name.equals(TypeName.DE_1_TIET)
-                        || level2Name.equals(TypeName.DE_HOC_KY)){
-                        Integer level4Id = Integer.parseInt(levels[3]);
-                        examSessionDTO.setLevel5s(typeService.getLevel5sReferenceLevel4(level4Id));
-                    }
-                }
-            }
+            examSessionDTO.getExamDTO().setType(typeId);
+            examSessionDTO.getExamDTO().setTypeInformation(typeInformation);
+            setInformationForAddOrUpdateExam(false, typeId, null, examSessionDTO, sentenceDTOWrapper);
         }
-        return "addExam";
-    }
-
-    @PostMapping(value = "/addExam")
-    public String addExam(@ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
-                          @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
-                          @RequestParam String action,
-                          @RequestParam(name = "is-update", required = false) Boolean isUpdate,
-                          Model model){
-        List<Level1DTO> level1s = getAllLevel1(typeService);
-        model.addAttribute("level1s", level1s);
-        if(action.equals("ADD_NEW_QUESTION")){
-            for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()){
-                System.out.println(sentenceSessionDTO);
-            }
-            sentenceDTOWrapper.getSentenceSessionDTOList().add(new SentenceSessionDTO());
-            if(isUpdate){
-                model.addAttribute("isUpdate", true);
-            }
-        }else {
-            System.out.println("SAVE_EXAM");
-            if(isUpdate){
-                System.out.println("Update");
-                Exam exam = new Exam();
-                exam.setId(examSessionDTO.getId());
-                System.out.println("examSessionDTO.getId() " + examSessionDTO.getId());
-                exam.setTitle(examSessionDTO.getTitle());
-                exam.setDescription(examSessionDTO.getDescription());
-                exam.setMinutes(examSessionDTO.getMinutes());
-                exam.setDate(examSessionDTO.getDate());
-                exam.setNumberOfSentences(sentenceDTOWrapper.getSentenceSessionDTOList().size());
-                exam.setType(examSessionDTO.getTempType());
-                exam.setNumberOfExams(examSessionDTO.getNumberOfExams());
-                examService.updateExam(exam);
-
-                for(int i = 0; i < sentenceDTOWrapper.getSentenceSessionDTOList().size(); i++) {
-                    SentenceSessionDTO sentenceSessionDTO = sentenceDTOWrapper.getSentenceSessionDTOList().get(i);
-                    System.out.println(sentenceSessionDTO);
-                    Sentence sentence = new Sentence();
-                    sentence.setId(sentenceSessionDTO.getId());
-                    sentence.setQuestion(sentenceSessionDTO.getQuestion());
-                    sentence.setA(sentenceSessionDTO.getA());
-                    sentence.setB(sentenceSessionDTO.getB());
-                    sentence.setC(sentenceSessionDTO.getC());
-                    sentence.setD(sentenceSessionDTO.getD());
-                    sentence.setAnswer(sentenceSessionDTO.getAnswer());
-                    sentence.setSolution(sentenceSessionDTO.getSolution());
-                    if (examSessionDTO.getLevel5s() != null && !examSessionDTO.getLevel5s().isEmpty()){
-                        sentence.setType(examSessionDTO.getTempType() + "-" + sentenceSessionDTO.getType());
-                    }else {
-                        sentence.setType(examSessionDTO.getTempType());
-                    }
-                    sentenceService.save(sentence, examSessionDTO.getId());
-                    //sentence.setExam(e);
-                    //sentenceService.saveOrUpdate(sentence);
-                }
-            }else{
-                System.out.println("ADD");
-                Exam exam = new Exam();
-                exam.setTitle(examSessionDTO.getTitle());
-                exam.setDescription(examSessionDTO.getDescription());
-                exam.setMinutes(examSessionDTO.getMinutes());
-                exam.setDate(LocalDate.now());
-                exam.setNumberOfSentences(sentenceDTOWrapper.getSentenceSessionDTOList().size());
-                exam.setType(examSessionDTO.getTempType());
-                System.out.println("EXAMMMMMMMMMMMMMMMMMMMMMMMMMM");
-                System.out.println(exam);
-                for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()){
-                    Sentence sentence = new Sentence();
-                    sentence.setQuestion(sentenceSessionDTO.getQuestion());
-                    sentence.setA(sentenceSessionDTO.getA());
-                    sentence.setB(sentenceSessionDTO.getB());
-                    sentence.setC(sentenceSessionDTO.getC());
-                    sentence.setD(sentenceSessionDTO.getD());
-                    sentence.setAnswer(sentenceSessionDTO.getAnswer());
-                    sentence.setSolution(sentenceSessionDTO.getSolution());
-                    if (examSessionDTO.getLevel5s() != null && !examSessionDTO.getLevel5s().isEmpty()){
-                        sentence.setType(examSessionDTO.getTempType() + "-" + sentenceSessionDTO.getType());
-                    }else {
-                        sentence.setType(examSessionDTO.getTempType());
-                    }
-                    System.out.println(sentence);
-                    exam.addSentence(sentence);
-                }
-                examService.addExam(exam);
-            }
-
-            sentenceDTOWrapper.getSentenceSessionDTOList().clear();
-            examSessionDTO.clean();
-            return "redirect:/exam";
-        }
-
-        return "addExam";
+        return "exam/addUpdateExam";
     }
 
     static List<Level1DTO> getAllLevel1(TypeService typeService) {
@@ -269,54 +139,93 @@ public class ExamController {
         return level1s;
     }
 
-    @RequestMapping("/deleteSentenceInSession")
-    public String deleteSentenceInSession(@RequestParam int sentence,
-                                          @RequestParam(name = "is-update") Boolean isUpdate,
-                                          @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
-                                          Model model){
-        Integer sentenceId = sentenceDTOWrapper.getSentenceSessionDTOList().get(sentence).getId();
-        sentenceDTOWrapper.getSentenceSessionDTOList().remove(sentence);
-        System.out.println("Removed " + sentence);
-        if(isUpdate){
-            sentenceService.delete(sentenceId);
-            model.addAttribute("isUpdate", true);
-            return "addExam";
-        }
-        return "redirect:addExam";
-    }
-
     @RequestMapping("/showExamForUpdate")
     public String showExamForUpdate(@RequestParam(name = "exam-id") Integer examId,
                                     @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
                                     @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
                                     Model model){
         examSessionDTO.clean();
-        Exam exam = examService.getExam(examId);
-        examSessionDTO.setId(exam.getId());
-        examSessionDTO.setTitle(exam.getTitle());
-        examSessionDTO.setDescription(exam.getDescription());
-        examSessionDTO.setMinutes(exam.getMinutes());
-        examSessionDTO.setDate(exam.getDate());
-        examSessionDTO.setNumberOfSentences(exam.getNumberOfSentences());
-        examSessionDTO.setTempType(exam.getType());
-        examSessionDTO.setNumberOfExams(exam.getNumberOfExams());
+        ExamDTO examDTO = examService.getExam(examId);
+        examSessionDTO.setExamDTO(examDTO);
 
-        String typeId = exam.getType();
-        String[] levels = typeId.split("-");
         sentenceDTOWrapper.getSentenceSessionDTOList().clear();
-        List<Sentence> sentences = examService.getSentencesOfExam(examId);
-        for(Sentence sentence : sentences){
+        List<SentenceDTO> sentenceDTOs = examService.getSentencesOfExam(examId);
+        for(SentenceDTO sentenceDTO : sentenceDTOs){
             SentenceSessionDTO sentenceSessionDTO = new SentenceSessionDTO();
-            sentenceSessionDTO.setId(sentence.getId());
-            sentenceSessionDTO.setQuestion(sentence.getQuestion());
-            sentenceSessionDTO.setA(sentence.getA());
-            sentenceSessionDTO.setB(sentence.getB());
-            sentenceSessionDTO.setC(sentence.getC());
-            sentenceSessionDTO.setD(sentence.getD());
-            sentenceSessionDTO.setAnswer(sentence.getAnswer());
-            sentenceSessionDTO.setSolution(sentence.getSolution());
+            sentenceSessionDTO.setSentenceDTO(sentenceDTO);
             sentenceDTOWrapper.getSentenceSessionDTOList().add(sentenceSessionDTO);
         }
+        String typeId = examDTO.getType();
+        setInformationForAddOrUpdateExam(true, typeId, sentenceDTOs, examSessionDTO, sentenceDTOWrapper);
+        model.addAttribute("isUpdate", true);
+        return "exam/addUpdateExam";
+    }
+
+    @PostMapping(value = "/addOrUpdateExam")
+    public String performExamForm(@RequestParam String action,
+                          @RequestParam(name = "is-update", required = false) Boolean isUpdate,
+                          @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
+                          @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
+                          Model model){
+        List<Level1DTO> level1s = getAllLevel1(typeService);
+        model.addAttribute("level1s", level1s);
+        if(action.equals("ADD_NEW_QUESTION")){
+            System.out.println("ADD_NEW_QUESTION");
+            sentenceDTOWrapper.getSentenceSessionDTOList().add(new SentenceSessionDTO());
+            if(isUpdate){
+                model.addAttribute("isUpdate", true);
+            }
+        }else {
+            System.out.println("SAVE_EXAM");
+            if(isUpdate){
+                System.out.println("Update");
+                addOrUpdateExam(true, examSessionDTO, sentenceDTOWrapper);
+            }else{
+                System.out.println("ADD");
+                addOrUpdateExam(false, examSessionDTO, sentenceDTOWrapper);
+
+            }
+            sentenceDTOWrapper.getSentenceSessionDTOList().clear();
+            examSessionDTO.clean();
+            return "redirect:/exam";
+        }
+        return "exam/addUpdateExam";
+    }
+
+    private void addOrUpdateExam(boolean isUpdate,
+                                 @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
+                                 @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper) {
+        ExamDTO examDTO = examSessionDTO.getExamDTO();
+        examDTO.setNumberOfSentences(sentenceDTOWrapper.getSentenceSessionDTOList().size());
+        if(isUpdate){
+            examService.updateExam(examDTO);
+        }
+        for(SentenceSessionDTO sentenceSessionDTO : sentenceDTOWrapper.getSentenceSessionDTOList()) {
+            SentenceDTO sentenceDTO = sentenceSessionDTO.getSentenceDTO();
+            if (examSessionDTO.getLevel5s() != null && !examSessionDTO.getLevel5s().isEmpty()){
+                sentenceDTO.setType(examSessionDTO.getExamDTO().getType() + "-" + sentenceSessionDTO.getTypeOfEndLevel());
+            }else {
+                sentenceDTO.setType(examSessionDTO.getExamDTO().getType());
+            }
+            if(isUpdate){
+                sentenceService.saveOrUpdate(sentenceDTO, examDTO.getId());
+            }else {
+                examDTO.addSentenceDTO(sentenceDTO);
+            }
+        }
+        if(!isUpdate){
+            examDTO.setDate(LocalDate.now());
+            System.out.println(examDTO);
+            examService.addExam(ConvertExamDTOToExam.convert(examDTO));
+        }
+    }
+
+    private void setInformationForAddOrUpdateExam(boolean isUpdate,
+                   String typeId,
+                   List<SentenceDTO> sentenceDTOs,
+                   @ModelAttribute("examSessionDTO") ExamSessionDTO examSessionDTO,
+                   @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper){
+        String[] levels = typeId.split("-");
         if(levels.length == 4){
             Integer level1Id = Integer.parseInt(levels[0]);
             String level1Name = typeService.getLevel1Name(level1Id);
@@ -324,24 +233,51 @@ public class ExamController {
                 Integer level2Id = Integer.parseInt(levels[1]);
                 String level2Name = typeService.getLevel2Name(level2Id);
                 if(level2Name.equals(TypeName.DE_15_PHUT) || level2Name.equals(TypeName.DE_1_TIET)){
-                    examSessionDTO.setHasTitleDefault(true);
-                    examSessionDTO.setHasDescriptionDefault(true);
-                    examSessionDTO.setHasMinutesDefault(true);
+                    examSessionDTO.setHasDefaultInformation(true);
+                    if(!isUpdate){
+                        if(level2Name.equals(TypeName.DE_15_PHUT)){
+                            setDefaultTitleDescriptionMinutes(examSessionDTO.getExamDTO(), "Đề kiểm tra 15 phút", 15);
+                        }else {
+                            setDefaultTitleDescriptionMinutes(examSessionDTO.getExamDTO(), "Đề kiểm tra 1 tiết", 45);
+                        }
+                    }
                 }
                 if(level2Name.equals(TypeName.DE_15_PHUT) || level2Name.equals(TypeName.DE_1_TIET)
                         || level2Name.equals(TypeName.DE_HOC_KY)){
                     Integer level4Id = Integer.parseInt(levels[3]);
                     examSessionDTO.setLevel5s(typeService.getLevel5sReferenceLevel4(level4Id));
-                    for(int i = 0; i < sentences.size(); i++){
-                        Sentence sentence = sentences.get(i);
-                        String[] levelsOfSentence = sentence.getType().split("-");
-                        sentenceDTOWrapper.getSentenceSessionDTOList().get(i).setType(levelsOfSentence[levelsOfSentence.length - 1]);
+                    if(isUpdate){
+                        for(int i = 0; i < sentenceDTOs.size(); i++){
+                            SentenceDTO sentenceDTO = sentenceDTOs.get(i);
+                            String[] levelsOfSentence = sentenceDTO.getType().split("-");
+                            sentenceDTOWrapper.getSentenceSessionDTOList().get(i).setTypeOfEndLevel(levelsOfSentence[levelsOfSentence.length - 1]);
+                        }
                     }
                 }
             }
         }
-        model.addAttribute("isUpdate", true);
-        return "addExam";
+
+    }
+
+    private void setDefaultTitleDescriptionMinutes(ExamDTO examDTO, String title, int minutes){
+        examDTO.setTitle(title);
+        examDTO.setDescription("");
+        examDTO.setMinutes(minutes);
+    }
+
+    @RequestMapping("/deleteSentenceInSession")
+    public String deleteSentenceInSession(@RequestParam int sentence,
+                                          @RequestParam(name = "is-update") Boolean isUpdate,
+                                          @ModelAttribute("sentenceSessionDTOs") SentenceDTOWrapper sentenceDTOWrapper,
+                                          Model model){
+        Integer sentenceId = sentenceDTOWrapper.getSentenceSessionDTOList().get(sentence).getSentenceDTO().getId();
+        sentenceDTOWrapper.getSentenceSessionDTOList().remove(sentence);
+        System.out.println("Removed " + sentence);
+        if(isUpdate){
+            sentenceService.delete(sentenceId);
+            model.addAttribute("isUpdate", true);
+        }
+        return "exam/addUpdateExam";
     }
 
     @RequestMapping("/delete")
@@ -354,7 +290,7 @@ public class ExamController {
 
     @RequestMapping("s")
     public String s(){
-        Exam e = examService.getExam(4);
+        ExamDTO e = examService.getExam(4);
         e.setTitle("my title");
         e.setDescription("my description");
         System.out.println(e);
@@ -369,15 +305,6 @@ public class ExamController {
     @ModelAttribute("sentenceSessionDTOs")
     public SentenceDTOWrapper sentenceDTOWrapper(){
         return new SentenceDTOWrapper();
-    }
-
-    private void setDefaultTitleDescriptionMinutes(ExamSessionDTO examSessionDTO, String title, int minutes){
-        examSessionDTO.setTitle(title);
-        examSessionDTO.setHasTitleDefault(true);
-        examSessionDTO.setDescription("");
-        examSessionDTO.setHasDescriptionDefault(true);
-        examSessionDTO.setMinutes(minutes);
-        examSessionDTO.setHasMinutesDefault(true);
     }
 
 }

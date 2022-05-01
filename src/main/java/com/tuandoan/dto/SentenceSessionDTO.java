@@ -1,102 +1,22 @@
 package com.tuandoan.dto;
 
-import com.tuandoan.entity.Answer;
-
 public class SentenceSessionDTO {
-    private int id;
-    private String question;
-    private String a;
-    private String b;
-    private String c;
-    private String d;
-    private Answer answer;
-    private String solution;
-    private String type;
+    private SentenceDTO sentenceDTO = new SentenceDTO();
+    private String typeOfEndLevel;
 
-    public int getId() {
-        return id;
+    public SentenceDTO getSentenceDTO() {
+        return sentenceDTO;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSentenceDTO(SentenceDTO sentenceDTO) {
+        this.sentenceDTO = sentenceDTO;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getTypeOfEndLevel() {
+        return typeOfEndLevel;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getA() {
-        return a;
-    }
-
-    public void setA(String a) {
-        this.a = a;
-    }
-
-    public String getB() {
-        return b;
-    }
-
-    public void setB(String b) {
-        this.b = b;
-    }
-
-    public String getC() {
-        return c;
-    }
-
-    public void setC(String c) {
-        this.c = c;
-    }
-
-    public String getD() {
-        return d;
-    }
-
-    public void setD(String d) {
-        this.d = d;
-    }
-
-    public Answer getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(Answer answer) {
-        this.answer = answer;
-    }
-
-    public String getSolution() {
-        return solution;
-    }
-
-    public void setSolution(String solution) {
-        this.solution = solution;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return "SentenceSessionDTO{" +
-                "id=" + id +
-                ", question='" + question + '\'' +
-                ", a='" + a + '\'' +
-                ", b='" + b + '\'' +
-                ", c='" + c + '\'' +
-                ", d='" + d + '\'' +
-                ", answer=" + answer +
-                ", solution='" + solution + '\'' +
-                ", type='" + type + '\'' +
-                '}';
+    public void setTypeOfEndLevel(String typeOfEndLevel) {
+        this.typeOfEndLevel = typeOfEndLevel;
     }
 }

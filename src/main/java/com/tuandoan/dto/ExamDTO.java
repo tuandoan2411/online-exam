@@ -1,20 +1,29 @@
 package com.tuandoan.dto;
 
+import com.tuandoan.entity.Sentence;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExamDTO {
-    private Integer id;
+    private int id;
     private String title;
+    private int minutes;
     private String description;
     private LocalDate date;
+    private String type;
+    private int numberOfSentences;
     private int numberOfExams;
     private String typeInformation;
 
-    public Integer getId() {
+    private List<SentenceDTO> sentenceDTOs;
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -24,6 +33,14 @@ public class ExamDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
     }
 
     public String getDescription() {
@@ -42,6 +59,22 @@ public class ExamDTO {
         this.date = date;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getNumberOfSentences() {
+        return numberOfSentences;
+    }
+
+    public void setNumberOfSentences(int numberOfSentences) {
+        this.numberOfSentences = numberOfSentences;
+    }
+
     public int getNumberOfExams() {
         return numberOfExams;
     }
@@ -56,5 +89,47 @@ public class ExamDTO {
 
     public void setTypeInformation(String typeInformation) {
         this.typeInformation = typeInformation;
+    }
+
+    public List<SentenceDTO> getSentenceDTOs() {
+        return sentenceDTOs;
+    }
+
+    public void setSentenceDTOs(List<SentenceDTO> sentenceDTOs) {
+        this.sentenceDTOs = sentenceDTOs;
+    }
+
+    public void addSentenceDTO(SentenceDTO sentenceDTO){
+        if(sentenceDTOs == null) sentenceDTOs = new ArrayList<>();
+        sentenceDTOs.add(sentenceDTO);
+    }
+
+    public void clean(){
+        title = null;
+        description = null;
+        minutes = 1;
+        type = null;
+        date = null;
+        numberOfSentences = 0;
+        numberOfExams = 0;
+        typeInformation = null;
+    }
+
+    @Override
+    public String toString() {
+        for(SentenceDTO sentenceDTO : sentenceDTOs){
+            System.out.println(sentenceDTO);
+        }
+        return "ExamDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", minutes=" + minutes +
+                ", description='" + description + '\'' +
+                ", date=" + date +
+                ", type='" + type + '\'' +
+                ", numberOfSentences=" + numberOfSentences +
+                ", numberOfExams=" + numberOfExams +
+                ", typeInformation='" + typeInformation + '\'' +
+                '}';
     }
 }

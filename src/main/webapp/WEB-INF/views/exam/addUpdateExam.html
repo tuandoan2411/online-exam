@@ -112,11 +112,11 @@
 </head>
 <body>
     <div class="container-choose-type" onclick="showOrHiddenType()" th:if="(not ${isUpdate})">
-        <span th:text="${examSessionDTO.typeInformation} ?: 'Chọn loại'"></span>
+        <span th:text="${examSessionDTO.examDTO.typeInformation} ?: 'Chọn loại'"></span>
         <i class="angle-down fa-solid fa-angle-down"></i>
     </div>
 
-    <div id="container-type" class="clearfix" th:style="(not ${isShowType}) ? 'display: none':''">
+    <div id="container-type" class="clearfix" th:style="(not ${isShowType}) ? 'display: none':''" th:if="(not ${isUpdate})">
         <div class="container-level">
             <input id="1" type="hidden" th:value="${level1Id}">
             <input id="information1" type="hidden" th:value="${level1Information}">
@@ -172,20 +172,20 @@
         </div>
     </div>
 
-    <form class="exam-form" action="#" th:action="@{/exam/addExam}" th:object="${sentenceSessionDTOs}" method="post" th:if="${examSessionDTO.tempType} != null">
+    <form class="exam-form" action="#" th:action="@{/exam/addOrUpdateExam}" th:object="${sentenceSessionDTOs}" method="post" th:if="${examSessionDTO.examDTO.type} != null">
         <input type="hidden" id="action" name="action">
         <input type="hidden" id="is-update" th:value="${isUpdate}" name="is-update" />
-        <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasTitleDefault})">
+        <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasDefaultInformation})">
             <label for="title">Tên đề thi</label>
-            <input id="title" type="text" th:field="${examSessionDTO.title}">
+            <input id="title" type="text" th:field="${examSessionDTO.examDTO.title}">
         </div>
-        <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasDescriptionDefault})">
+        <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasDefaultInformation})">
             <label for="description">Mô tả</label>
-            <input id="description" type="text" th:field="${examSessionDTO.description}">
+            <input id="description" type="text" th:field="${examSessionDTO.examDTO.description}">
         </div>
-        <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasMinutesDefault})">
+        <div class="column-2 clearfix" th:if="(not ${examSessionDTO.hasDefaultInformation})">
             <label for="minutes">Số phút</label>
-            <input id="minutes" type="number" required min="1" th:field="${examSessionDTO.minutes}">
+            <input id="minutes" type="number" required min="1" th:field="${examSessionDTO.examDTO.minutes}">
         </div>
         <div class="submit-btn">
             <button id="add-sentence" onclick="addNewSentence()" type="submit">Thêm câu hỏi</button>
@@ -193,7 +193,7 @@
         <div class="container-sentence column-2" th:each="sentence, stat : ${sentenceSessionDTOs.sentenceSessionDTOList}">
             <div class="column-2 clearfix" th:if="${examSessionDTO.level5s} != null">
                 <label>Chọn loại cho câu này</label>
-                <select th:field="*{sentenceSessionDTOList[__${stat.index}__].type}">
+                <select th:field="*{sentenceSessionDTOList[__${stat.index}__].typeOfEndLevel}">
                     <option th:each="level5 : ${examSessionDTO.level5s}"
                             th:value="${level5.id}"
                             th:text="${level5.name}"
@@ -202,34 +202,34 @@
             </div>
             <div class="column-2 clearfix">
                 <label for="question" th:text="|Câu ${stat.index + 1}|">Câu hỏi</label>
-                <textarea name="question" id="question" th:field="*{sentenceSessionDTOList[__${stat.index}__].question}"></textarea>
+                <textarea name="question" id="question" th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.question}"></textarea>
             </div>
             <div class="column-2 clearfix">
                 <label for="a">A</label>
-                <textarea id="a" th:field="*{sentenceSessionDTOList[__${stat.index}__].a}"></textarea>
+                <textarea id="a" th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.a}"></textarea>
             </div>
             <div class="column-2 clearfix">
                 <label for="b">B</label>
-                <textarea id="b" th:field="*{sentenceSessionDTOList[__${stat.index}__].b}"></textarea>
+                <textarea id="b" th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.b}"></textarea>
             </div>
             <div class="column-2 clearfix">
                 <label for="c">C</label>
-                <textarea id="c" th:field="*{sentenceSessionDTOList[__${stat.index}__].c}"></textarea>
+                <textarea id="c" th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.c}"></textarea>
             </div>
             <div class="column-2 clearfix">
                 <label for="d">D</label>
-                <textarea id="d" th:field="*{sentenceSessionDTOList[__${stat.index}__].d}"></textarea>
+                <textarea id="d" th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.d}"></textarea>
             </div>
             <div class="column-2 clearfix">
                 <label for="answer">Đáp án</label>
-                <select id="answer" th:field="*{sentenceSessionDTOList[__${stat.index}__].answer}">
+                <select id="answer" th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.answer}">
                     <option th:each="answerOpt : ${T(com.tuandoan.entity.Answer).values()}"
                             th:value="${answerOpt}" th:text="${answerOpt.code}"></option>
                 </select>
             </div>
             <div class="column-2 clearfix">
                 <label for="solution">Lời giải</label>
-                <textarea name="solution" id="solution"  th:field="*{sentenceSessionDTOList[__${stat.index}__].solution}"></textarea>
+                <textarea name="solution" id="solution"  th:field="*{sentenceSessionDTOList[__${stat.index}__].sentenceDTO.solution}"></textarea>
             </div>
             <div class="container-delete column-2">
                 <span th:id="${stat.index}" class="delete" onclick="deleteSentence(this)"><i class="fa-solid fa-trash"></i>Xoá câu hỏi</span>

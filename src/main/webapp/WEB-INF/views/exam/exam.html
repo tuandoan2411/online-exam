@@ -17,7 +17,7 @@
 <div class="container-exam">
     <div class="exam" th:each="exam : ${exams}">
         <div class="container-title clearfix">
-            <a th:href="@{/exam/showExam(exam-id=${exam.id})}" class="title" th:text="${exam.title}">ten de 1</a>
+            <a th:href="@{/exam/showExamDetail(exam-id=${exam.id})}" class="title" th:text="${exam.title}">ten de 1</a>
             <div th:id="${exam.id}" class="container-delete-update">
                 <span class="update"><i class="fa-solid fa-pen"></i></span>
                 <span class="delete"><i class="fa-solid fa-trash"></i></span>

@@ -1,11 +1,10 @@
 package com.tuandoan.service;
 
+import com.tuandoan.dto.SentenceDTO;
 import com.tuandoan.entity.Sentence;
 
 public interface SentenceService {
     void delete(Integer id);
 
-    void saveOrUpdate(Sentence sentence);
-
-    void save(Sentence sentence, int examId);
+    void saveOrUpdate(SentenceDTO sentence, int examId);
 }
