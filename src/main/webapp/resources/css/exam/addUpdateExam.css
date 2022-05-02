@@ -1,0 +1,102 @@
+*{
+    box-sizing: border-box;
+}
+
+.container-choose-type{
+    border: 1px solid black;
+    padding-right: 10px;
+    max-width: 350px;
+    color: rgb(80, 20, 20);
+    font-weight: bold;
+}
+
+.angle-down{
+    float: right;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.container-information{
+    font-size: 20px;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+.container-level{
+    float: left;
+    width: 20%;
+    height: 25vh;
+    overflow: auto;
+    padding: 5px;
+    background-color: yellow;
+    border-right: 1px solid black;
+}
+
+.angle-right{
+    float: right;
+}
+
+.exam-form{
+    background-color: rgba(150, 188, 98, 0.293);
+    margin-top: 10px;
+}
+
+.container-sentence{
+    background-color: #ADEFD1FF;
+}
+
+#add-sentence, #save-exam{
+    font-size: 20px;
+    padding: 5px;
+    background-color: aqua;
+    cursor: pointer;
+}
+
+textarea {
+    resize: none;
+}
+
+.column-2{
+    max-width: 500px;
+    font-size: 20px;
+    margin: auto auto 10px;
+}
+
+.column-2 label{
+    float: left;
+    width: 30%;
+}
+
+.column-2 input, .column-2 textarea{
+    float: right;
+    width: 70%;
+    font-size: 16px;
+    background-color: rgb(248, 248, 239);
+}
+
+.column-2 select{
+    float: left;
+    width: 40%;
+    font-size: inherit;
+    background-color: rgb(248, 248, 239);
+}
+
+.container-delete{
+    cursor: pointer;
+    text-align: center;
+}
+
+.delete i{
+    color: red;
+    padding-right: 5px;
+}
+
+.submit-btn{
+    max-width: 500px;
+    margin: auto auto 10px;
+    text-align: center;
+}

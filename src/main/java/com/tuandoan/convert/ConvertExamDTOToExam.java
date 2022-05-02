@@ -20,13 +20,16 @@ public class ConvertExamDTOToExam {
         exam.setType(examDTO.getType());
         exam.setNumberOfSentences(examDTO.getNumberOfSentences());
         exam.setNumberOfExams(examDTO.getNumberOfExams());
-        List<Sentence> sentences = new ArrayList<>();
-        for(SentenceDTO sentenceDTO : examDTO.getSentenceDTOs()){
-            Sentence sentence = ConvertSentenceDTOToSentence.convert(sentenceDTO);
-            sentence.setExam(exam);
-            sentences.add(sentence);
+        List<SentenceDTO> sentenceDTOs = examDTO.getSentenceDTOs();
+        if(sentenceDTOs != null && !sentenceDTOs.isEmpty()){
+            List<Sentence> sentences = new ArrayList<>();
+            for(SentenceDTO sentenceDTO : sentenceDTOs){
+                Sentence sentence = ConvertSentenceDTOToSentence.convert(sentenceDTO);
+                sentence.setExam(exam);
+                sentences.add(sentence);
+            }
+            exam.setSentences(sentences);
         }
-        exam.setSentences(sentences);
         return exam;
     }
 }

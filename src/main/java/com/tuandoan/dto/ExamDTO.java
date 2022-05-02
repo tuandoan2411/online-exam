@@ -1,13 +1,11 @@
 package com.tuandoan.dto;
 
-import com.tuandoan.entity.Sentence;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExamDTO {
-    private int id;
+    private Integer id;
     private String title;
     private int minutes;
     private String description;
@@ -19,11 +17,11 @@ public class ExamDTO {
 
     private List<SentenceDTO> sentenceDTOs;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -105,6 +103,7 @@ public class ExamDTO {
     }
 
     public void clean(){
+        id = null;
         title = null;
         description = null;
         minutes = 1;
@@ -113,6 +112,7 @@ public class ExamDTO {
         numberOfSentences = 0;
         numberOfExams = 0;
         typeInformation = null;
+        sentenceDTOs = null;
     }
 
     @Override

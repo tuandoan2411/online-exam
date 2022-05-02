@@ -31,12 +31,14 @@ public class ConvertExamToExamDTO {
         examDTO.setNumberOfSentences(exam.getNumberOfSentences());
         examDTO.setNumberOfExams(exam.getNumberOfExams());
         examDTO.setTypeInformation(typeService.getTypeInformationForExam(exam.getType()));
-        List<SentenceDTO> sentenceDTOs = new ArrayList<>();
-        for(Sentence sentence : exam.getSentences()){
-            sentenceDTOs.add(ConvertSentenceToSentenceDTO.convert(sentence));
+        List<Sentence> sentences = exam.getSentences();
+        if(sentences != null && !sentences.isEmpty()){
+            List<SentenceDTO> sentenceDTOs = new ArrayList<>();
+            for(Sentence sentence : sentences){
+                sentenceDTOs.add(ConvertSentenceToSentenceDTO.convert(sentence));
+            }
+            examDTO.setSentenceDTOs(sentenceDTOs);
         }
-        examDTO.setSentenceDTOs(sentenceDTOs);
-
         return examDTO;
     }
 }

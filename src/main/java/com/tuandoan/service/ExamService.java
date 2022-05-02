@@ -10,8 +10,6 @@ import java.util.List;
 public interface ExamService {
     void addExam(ExamDTO examDTO);
 
-    void addExam(Exam exam);
-
     void updateExam(ExamDTO exam);
 
     ExamDTO getExam(Integer examId);

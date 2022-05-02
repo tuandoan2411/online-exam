@@ -16,7 +16,6 @@ public class ConvertSentenceToSentenceDTO {
         sentenceDTO.setAnswer(sentence.getAnswer());
         sentenceDTO.setSolution(sentence.getSolution());
         sentenceDTO.setType(sentence.getType());
-
         return sentenceDTO;
     }
 }

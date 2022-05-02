@@ -1,0 +1,49 @@
+.container-exam {
+    max-width: 600px;
+    margin: auto;
+    background-color: rgba(38, 203, 244, 0.14);
+    border: 1px solid black;
+    padding: 20px;
+}
+
+.container-title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.container-description {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.container-3-column {
+    background-color: lightgray;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.container-number-of-sentences,
+.container-minutes,
+.container-number-of-exams {
+    float: left;
+    width: 33%;
+}
+
+.container-sentence {
+    margin-bottom: 15px;
+}
+
+.container-sentence div {
+    margin-bottom: 5px;
+}
+
+.sentence {
+    font-weight: bold;
+}

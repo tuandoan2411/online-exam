@@ -27,16 +27,7 @@ public class ExamServiceImpl implements ExamService{
     @Override
     @Transactional
     public void addExam(ExamDTO examDTO) {
-        System.out.println("ServiceImpl addExam(ExamDTO examDTO)");
-        System.out.println(examDTO);
         examDAO.addExam(ConvertExamDTOToExam.convert(examDTO));
-    }
-
-    @Override
-    @Transactional
-    public void addExam(Exam exam) {
-        System.out.println("addExam(Exam exam)");
-        examDAO.addExam(exam);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.tuandoan.dto;
 import com.tuandoan.entity.Answer;
 
 public class SentenceDTO {
-    private int id;
+    private Integer id;
     private String question;
     private String a;
     private String b;
@@ -13,13 +13,11 @@ public class SentenceDTO {
     private String solution;
     private String type;
 
-    private ExamDTO examDTO;
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -85,14 +83,6 @@ public class SentenceDTO {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public ExamDTO getExamDTO() {
-        return examDTO;
-    }
-
-    public void setExamDTO(ExamDTO examDTO) {
-        this.examDTO = examDTO;
     }
 
     @Override
